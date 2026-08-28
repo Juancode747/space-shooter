@@ -215,7 +215,7 @@ function generateFloor(floorNum) {
 
 function spawnEnemies(room, floorNum) {
     if (room.cleared || room.isStart || room.isShop || room.isBoss) return;
-    const count = 4 + floorNum * 2 + Math.floor(Math.random() * 3);
+    const count = 2 + floorNum;
     const types = Object.keys(ENEMY_TYPES);
     const available = types.slice(0, Math.min(types.length, floorNum + 1));
 
@@ -601,9 +601,9 @@ function updateBoss(boss, dist, angle) {
                     }
                 }
             } else if (attack === 'spawn') {
-                if (boss.spawnTimer === 0 || boss.spawnTimer > 60) {
+                if (boss.spawnTimer === 0 || boss.spawnTimer > 80) {
                     boss.spawnTimer = 1;
-                    if (room.enemies.filter(e => e.hp > 0).length < 8) {
+                    if (room.enemies.filter(e => e.hp > 0).length < 4) {
                         const sx = boss.x + (Math.random() - 0.5) * 100;
                         const sy = boss.y + (Math.random() - 0.5) * 100;
                         room.enemies.push({
@@ -619,8 +619,8 @@ function updateBoss(boss, dist, angle) {
             break;
         case 'boss2':
             if (attack === 'fireball') {
-                for (let i = 0; i < 8; i++) {
-                    const a = (Math.PI * 2 / 8) * i + boss.attackTimer * 0.02;
+                for (let i = 0; i < 5; i++) {
+                    const a = (Math.PI * 2 / 5) * i + boss.attackTimer * 0.02;
                     enemyBullets.push({
                         x: boss.x, y: boss.y,
                         vx: Math.cos(a) * 3,
@@ -630,19 +630,17 @@ function updateBoss(boss, dist, angle) {
                     });
                 }
             } else if (attack === 'rain') {
-                if (Math.random() < 0.3) {
+                if (Math.random() < 0.2) {
                     const rx = 80 + Math.random() * (ROOM_W * ROOM_SIZE - 160);
                     const ry = 80 + Math.random() * (ROOM_H * ROOM_SIZE - 160);
-                    spawnParticles(rx, ry - 50, '#f44', 1, 0);
-                    setTimeout(() => {
-                        enemyBullets.push({
-                            x: rx, y: ry,
-                            vx: 0, vy: 0,
-                            damage: 20, size: 15,
-                            color: '#f80', life: 20,
-                            aoe: true, aoeRadius: 50
-                        });
-                    }, 500);
+                    spawnParticles(rx, ry, '#f44', 5, 3);
+                    enemyBullets.push({
+                        x: rx, y: ry,
+                        vx: 0, vy: 0,
+                        damage: 15, size: 12,
+                        color: '#f80', life: 15,
+                        aoe: true, aoeRadius: 40
+                    });
                 }
             }
             if (dist > 150) {
